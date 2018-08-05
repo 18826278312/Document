@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>公文分发识别系统</title>
+<link rel="stylesheet" href="../css/document.css"/>
+</head>
+<body>
+<div class="document">
+	<div class="top">
+		<div class="opinion">
+			<div style="margin-left:5px;">处理意见</div>
+			<textarea id="opinionText" style="margin-top:5px;height:115px;width:370px;"></textarea>
+			<div style="margin-top:5px;">
+				<span style="margin-left:5px;">保存为常用意见：</span>
+				<select id="opinionSelect" style="width:237px;font-size:15px;">
+					<option selected="selected">--请选择常用意见--</option>
+				</select>
+			</div>
+		</div>
+		<div class="path">
+			<div style="margin-left:5px;">选择路径</div>
+			<select id="pathSelect" style="margin-top:5px;height:145px;width:375px;" size=15px onclick="clickPathSelect(this)">
+			</select>
+		</div>
+	</div>
+	
+	<div class="middle">
+		<div class="leftPersonnel">
+			<div id="leftTitle" style="margin-left:5px;"></div>
+			<div id="leftHandle" style="margin-left:5px;">&nbsp;</div>
+			<div style="margin-top:5px">
+				<select id="leftSelect" style="float:left;width:165px;height:200px" size=15 onclick="clickSelect(this,'left')">
+				</select>
+				<div style="float:left;margin-left:5px;width:32px;">
+					<button style="margin-top:60px;" onclick="addList('left')">>></button>
+					<button style="margin-top:20px;" onclick="emptyList('left')"><<</button>
+				</div>
+				<select id="leftList" style="float:left;margin-left:5px;width:165px;height:200px" size=15 onclick="clickList(this)">
+				</select>
+			</div>
+		</div>
+		<div class="rightPersonnel">
+			<div id="rightTitle" style="margin-left:5px;"></div>
+			<div id="rightHandle" style="margin-left:5px;">&nbsp;</div>
+			<div style="margin-top:5px">
+				<select id="rightSelect" style="float:left;width:165px;height:200px" size=15 onclick="clickSelect(this,'right')">
+				</select>
+				<div style="float:left;margin-left:5px;width:32px;">
+					<button style="margin-top:60px;" onclick="addList('right')">>></button>
+					<button style="margin-top:20px;" onclick="emptyList('right')"><<</button>
+				</div>
+				<select id="rightList" style="float:left;margin-left:5px;width:165px;height:200px" size=15 onclick="clickList(this)" >
+				</select>
+			</div>
+		</div>
+	</div>
+	
+	<div class="bottom">
+		<select id="actionSelect" style="width:200px;height:25px;float:left;font-size:15px;">
+			<option selected="selected">--请选择常用动作--</option>
+		</select>
+		<button style="height:25px;margin-right:10px;float:right;">关闭</button>
+		<button style="height:25px;margin-right:10px;float:right;">保存意见并关闭</button>
+		<button style="height:25px;margin-right:10px;float:right;">保存为常用动作</button>
+		<button style="height:25px;margin-right:10px;float:right;" onclick="submit()">提交</button>
+		<span style="margin-top:5px;margin-right:10px;font-size:15px;float:right;">关注本文件</span>
+		<input style="height:25px;float:right;" type="checkbox" name="checkbox" value="1">
+	</div>
+</div>
+</body>
+<script src="../js/jquery-1.11.0.min.js"></script>
+<script src="../js/document.js"></script>
+</html>
