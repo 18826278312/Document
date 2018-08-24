@@ -15,12 +15,17 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.example.service.DocumentService;
+import com.example.vo.OperationalVo;
+import com.example.vo.ProxyVo;
+import com.example.vo.SelectPathVo;
 
 @Service
 public class DocumentServiceImpl implements DocumentService{
 
-	private static String personnelUrl = "D:/备份/【人员名单】控件/部门.txt";
-	private static String leaderUrl = "D:/备份/【人员名单】控件/领导.txt";
+	private static String personnelUrl = "C:/Users/xiang/Desktop/公文/员工.txt";
+	private static String leaderUrl = "C:/Users/xiang/Desktop/公文/领导.txt";
+	private static String documentUrl = "C:/Users/xiang/Desktop/公文/公文配置.txt";
+	
 	@Override
 	public List<Object> recursiveMenu(String parentMenu, String[] sonMent, List<String> list, int length) {
 		List<Object> resultList = new ArrayList<Object>();
@@ -45,8 +50,14 @@ public class DocumentServiceImpl implements DocumentService{
 					break;
 				}
 			}
+			//如果menuStatus为true表示是为人员
 			if (menuStatus) {
-				resultList.add(sonMent[i]);
+				//设置有代理的人员
+				ProxyVo proxy = new ProxyVo();
+				proxy.setName(sonMent[i]);
+				proxy.setProxy("李四");
+				proxy.setStatus(true);
+				resultList.add(proxy);
 			}
 		}
 		return resultList;
@@ -100,7 +111,7 @@ public class DocumentServiceImpl implements DocumentService{
 	public List<Object> changeOrder(List<Object> menuList) {
 		List<Object> list = new ArrayList<Object>();
 		for (int i = menuList.size()-1; i >= 0; i--) {
-			if (menuList.get(i) instanceof String) {
+			if ((ProxyVo)JSONObject.parseObject(menuList.get(i).toString(), ProxyVo.class) instanceof ProxyVo) {
 				list.add(menuList.get(i));
 			}else{
 				Map<String, List<Object>> map = (Map<String, List<Object>>) JSONObject.toJSON((menuList.get(i)));
@@ -151,14 +162,55 @@ public class DocumentServiceImpl implements DocumentService{
 	}
 
 	@Override
-	public List<String> listleader() throws Exception {
-		List<String> list = new ArrayList<String>();
+	public List<ProxyVo> listleader() throws Exception {
+		List<ProxyVo> list = new ArrayList<ProxyVo>();
 		File file = new File(leaderUrl);
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		String lineTxt = null;
 		//读取文件中的记录并添加到list里
 		while ((lineTxt = br.readLine()) != null) {
-			list.add(lineTxt);
+			ProxyVo proxy = new ProxyVo();
+			proxy.setName(lineTxt);
+			if (lineTxt.equals("林虹") || lineTxt.equals("﻿林志敏")) {
+				proxy.setProxy("张三");
+				proxy.setStatus(true);
+			}
+			list.add(proxy);
+		}
+		return list;
+	}
+
+	@Override
+	public List<SelectPathVo> listSelectPath(String languageType, String processLink) throws Exception{
+		List<SelectPathVo> list = new ArrayList<SelectPathVo>();
+		//读取文件
+		File file = new File(documentUrl);
+		BufferedReader br = new BufferedReader(new FileReader(file));
+		String lineTxt = null;
+		//读取公文的相关数据
+		while ((lineTxt = br.readLine()) != null) {
+			String[] array = lineTxt.split("    ");
+			//如果文种类型和办理环节一致，则取出对应信息
+			if (array[0].equals(languageType) && array[1].equals(processLink)) {
+				for(int i=2;i<=4;i=i+2){
+					SelectPathVo selectPath = new SelectPathVo();
+					selectPath.setName(array[i]);
+					String[] selects = array[i+1].split(":");
+					selectPath.setNumber(Integer.valueOf(selects[0]));
+					List<OperationalVo> operationalVos = new ArrayList<OperationalVo>();
+					for(int j=0;j<Integer.valueOf(selects[0]);j++){
+						OperationalVo operational = new OperationalVo();
+						String[] operationals = selects[1].split(";")[j].split(" ");
+						operational.setPersonType(operationals[1]);
+						operational.setTimeStatus(operationals[2]);
+						operational.setTitle(operationals[0]);
+						operationalVos.add(operational);
+					}
+					selectPath.setList(operationalVos);
+					list.add(selectPath);
+				}
+				break;
+			}
 		}
 		return list;
 	}
